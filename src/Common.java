@@ -54,49 +54,6 @@ public class Common {
         }
     }
 
-    public static Pair<int[],Integer> bfs(Board b, Node source) {
-        int distance[] = new int[81];
-        int previous[] = new int[81];
-        boolean visited[] = new boolean[81];
-        for (int i = 0; i < 81; ++i) {
-            distance[i] = Integer.MAX_VALUE;
-            previous[i] = -1;
-            visited[i] = false;
-        }
-
-        int sourceCoord = source.getUnaryCoord();
-        visited[sourceCoord] = true;
-        distance[sourceCoord] = 0;
-        previous[sourceCoord] = -1;
-        Queue<Node> q = new LinkedList<>();
-        q.add(source);
-        Node n;
-        int index1, index2 = 0;
-        boolean goal = false;
-        while(!q.isEmpty() && !goal) {
-            n = q.poll();
-            index1 = n.getUnaryCoord();
-            for (Node i : b.getNeighbors(n)) {
-                index2 = i.getUnaryCoord();
-                if (index2 >= 72 && index2 <= 80) {
-                    goal = true;
-                    visited[index2] = true;
-                    distance[index2] = distance[index1] + 1;
-                    previous[index2] = index1;
-                    break;
-                }
-                else if(!visited[index2]) {
-                    visited[index2] = true;
-                    distance[index2] = distance[index1] + 1;
-                    previous[index2] = index1;
-                    q.add(i);
-                }
-            }
-        }
-        if(!goal) return new Pair<>(new int[0],-1);
-        return new Pair<>(previous,index2);
-    }
-
     public static boolean playerWon(Player player) {
         int coordinateY = player.getPosition().getCoordinateY();
         if((player.getId()==1 && coordinateY == 9) ||
