@@ -54,10 +54,10 @@ public class Common {
         }
     }
 
-    public static boolean playerWon(Player player) {
-        int coordinateY = player.getPosition().getCoordinateY();
-        if((player.getId()==1 && coordinateY == 9) ||
-                (player.getId()==2 && coordinateY == 1)) return true;
+    public static boolean playerWon(Node player1, Node player2) {
+        int coordinateY = player1.getCoordinateY();
+        int coordinateY2 = player2.getCoordinateY();
+        if(coordinateY == 9  || coordinateY2 == 1) return true;
         return false;
     }
 }

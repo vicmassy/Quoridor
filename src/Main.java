@@ -30,7 +30,22 @@ public class Main {
             System.out.print(shortestPath.get(i) + " ");
         }
         System.out.println();*/
+        int turn = 0;
         b.print();
+        System.out.println("Player 1 turn: " + b.getNeighbours(b.getPlayer1().getPosition()));
+        Scanner input = new Scanner(System.in);
+        String in = input.nextLine();
+        while(true) {
+            while(in.length() < 2 || !b.movePlayer(turn,in)) {
+                System.out.println("Incorrect movement: " + in);
+                in = input.nextLine();
+            }
+            turn = (turn+1)%2;
+            b.print();
+            if(Common.playerWon(b.getPlayer1().getPosition(),b.getPlayer2().getPosition())) break;
+            System.out.println("Player " + (turn+1) + " turn: " + b.getNeighbours(b.getPlayerTurn(turn).getPosition()));
+            in = input.nextLine();
+        }
     }
 
 }

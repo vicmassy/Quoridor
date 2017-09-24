@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Board {
 
-    private Map<Node,ArrayList<Node>> edges;
+    private Map<Node,Set<Node>> edges;
     private ArrayList<Node> nodes;
     private char[][] graphicBoard;
     private Player player1;
@@ -15,8 +15,8 @@ public class Board {
         graphicBoard = new char[18][18];
         createNodes();
         createEdges();
-        player1 = new Player(getNode("E1"),1);
-        player2 = new Player(getNode("E9"),2);
+        player1 = new Player(getNode("E3"),0);
+        player2 = new Player(getNode("E5"),1);
     }
 
     private void createNodes() {
@@ -30,10 +30,10 @@ public class Board {
     }
 
     private void createEdges() {
-        ArrayList<Node> v;
+        Set<Node> v;
         for(int i = 1; i <= 9; ++i) {
             for(int j = 1; j <= 9; ++j) {
-                v = new ArrayList<>();
+                v = new HashSet<>();
                 Node n = nodes.get((j-1)*9+i-1);
                 int coordX = n.getCoordinateX();
                 int coordY = n.getCoordinateY();
@@ -73,23 +73,23 @@ public class Board {
         return player2;
     }
 
-    public ArrayList<Node> getNeighbors(String id) {
+    public Set<Node> getNeighbours(String id) {
         Node n = getNode(id);
         return edges.get(n);
     }
 
-    public ArrayList<Node> getNeighbors(Node n) {
+    public Set<Node> getNeighbours(Node n) {
         return edges.get(n);
     }
 
     private void removeNeighbour(Node n1, Node n2) {
-        ArrayList<Node> neighbors = edges.get(n1);
-        neighbors.remove(n2);
-        edges.replace(n1,neighbors);
+        Set<Node> neighbours = edges.get(n1);
+        neighbours.remove(n2);
+        edges.replace(n1,neighbours);
 
-        neighbors = edges.get(n2);
-        neighbors.remove(n1);
-        edges.replace(n2,neighbors);
+        neighbours = edges.get(n2);
+        neighbours.remove(n1);
+        edges.replace(n2,neighbours);
     }
 
     public Pair<int[],Integer> bfs(Node source) {
@@ -114,7 +114,7 @@ public class Board {
         while(!q.isEmpty() && !goal) {
             n = q.poll();
             index1 = n.getUnaryCoord();
-            for (Node i : getNeighbors(n)) {
+            for (Node i : getNeighbours(n)) {
                 index2 = i.getUnaryCoord();
                 if (index2 >= 72 && index2 <= 80) {
                     goal = true;
@@ -142,7 +142,7 @@ public class Board {
     }
 
     private void addNeighbour(Node n1, Node n2) {
-        ArrayList<Node> aux = edges.get(n1);
+        Set<Node> aux = edges.get(n1);
         aux.add(n2);
         edges.replace(n1,aux);
         aux = edges.get(n2);
@@ -197,11 +197,74 @@ public class Board {
         return false;
     }
 
-    public void print(){
+    private boolean checkMove(Node pos, Node dest) {
+        return getNeighbours(pos).contains(dest);
+    }
+
+    public Player getPlayerTurn(int idPlayer) {
+        if(idPlayer == player1.getId()) return player1;
+        return player2;
+    }
+
+    //TODO: Mantenir actualitzat el vector neighbours! Reinsertar els nodes eliminats temporalment
+    /*private void checkNewNeighbours(Node n1, int idPlayer, Node origin) {
+        Node n2 = getPlayerTurn(idPlayer+1).getPosition();
+        ArrayList<Node> neighbours1 = getNeighbours(n1);
+        ArrayList<Node> neighbours2 = getNeighbours(n2);
+        ArrayList<Node> neighboursOrigin = getNeighbours(origin);
+        if (neighbours1.contains(origin)) {
+            System.out.println("HOLAAA");
+            for(Node i : neighbours1) {
+                if(neighboursOrigin.contains(i)) neighboursOrigin.remove(i);
+            }
+            if(neighbours1.contains(origin)) neighboursOrigin.add(n1);
+            edges.replace(origin,neighboursOrigin);
+        }
+        if(neighbours1.contains(n2)) {
+            neighbours2.remove(n1);
+            for(Node i : neighbours1) {
+                if(!neighbours2.contains(i) && i != n2) neighbours2.add(i);
+            }
+            edges.replace(n2,neighbours2);
+        }
+    }*/
+
+    public boolean movePlayer(int idPlayer, String position) {
+        Node src = getPlayerTurn(idPlayer).getPosition();
+        Node dest = getNode(position);
+        if(checkMove(src, dest)) {
+            getPlayerTurn(idPlayer).setPosition(dest);
+            Node enemy = getPlayerTurn((idPlayer+1)%2).getPosition();
+            Set<Node> enemyNeighbours = getNeighbours(enemy);
+            Set<Node> originNeighbours = getNeighbours(src);
+            Set<Node> playerNeighbours = getNeighbours(dest);
+            if(enemyNeighbours.contains(src)) {
+                for(Node i : enemyNeighbours) {
+                    if(originNeighbours.contains(i)) originNeighbours.remove(i);
+                }
+                if(enemyNeighbours.contains(src)) originNeighbours.add(enemy);
+                edges.replace(src,originNeighbours);
+            }
+            if(enemyNeighbours.contains(dest)) {
+                enemyNeighbours.remove(dest);
+                for(Node i : playerNeighbours) {
+                    if(!enemyNeighbours.contains(i) && i != enemy) enemyNeighbours.add(i);
+                }
+                edges.replace(enemy,enemyNeighbours);
+            }
+            graphicBoard[16-((src.getCoordinateY()-1)*2)][(src.getCoordinateX()-1)*2] = ' ';
+            graphicBoard[16-((dest.getCoordinateY()-1)*2)][(dest.getCoordinateX()-1)*2] = (char) (idPlayer+1);
+            return true;
+        }
+        return false;
+    }
+
+    public void print() {
         graphicBoard[16-((player1.getPosition().getCoordinateY()-1)*2)][(player1.getPosition().getCoordinateX()-1)*2] = '1';
         graphicBoard[16-((player2.getPosition().getCoordinateY()-1)*2)][(player2.getPosition().getCoordinateX()-1)*2] = '2';
 
         for(int i = 0; i < 17; ++i) {
+            if(i%2 == 0) System.out.print(10 -(i/2+1) + " ");
             for(int j = 0; j < 17; ++j) {
                 if(graphicBoard[i][j] == '1' || graphicBoard[i][j] == '2') System.out.print(graphicBoard[i][j]);
                 else if(graphicBoard[i][j] == '-') System.out.print("-");
@@ -211,5 +274,7 @@ public class Board {
             }
             System.out.println();
         }
+        System.out.println("  A B C D E F G H I");
     }
+
 }
