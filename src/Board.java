@@ -206,29 +206,6 @@ public class Board {
         return player2;
     }
 
-    //TODO: Mantenir actualitzat el vector neighbours! Reinsertar els nodes eliminats temporalment
-    /*private void checkNewNeighbours(Node n1, int idPlayer, Node origin) {
-        Node n2 = getPlayerTurn(idPlayer+1).getPosition();
-        ArrayList<Node> neighbours1 = getNeighbours(n1);
-        ArrayList<Node> neighbours2 = getNeighbours(n2);
-        ArrayList<Node> neighboursOrigin = getNeighbours(origin);
-        if (neighbours1.contains(origin)) {
-            System.out.println("HOLAAA");
-            for(Node i : neighbours1) {
-                if(neighboursOrigin.contains(i)) neighboursOrigin.remove(i);
-            }
-            if(neighbours1.contains(origin)) neighboursOrigin.add(n1);
-            edges.replace(origin,neighboursOrigin);
-        }
-        if(neighbours1.contains(n2)) {
-            neighbours2.remove(n1);
-            for(Node i : neighbours1) {
-                if(!neighbours2.contains(i) && i != n2) neighbours2.add(i);
-            }
-            edges.replace(n2,neighbours2);
-        }
-    }*/
-
     public boolean movePlayer(int idPlayer, String position) {
         Node src = getPlayerTurn(idPlayer).getPosition();
         Node dest = getNode(position);
