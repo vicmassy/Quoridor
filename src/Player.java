@@ -1,10 +1,10 @@
 public class Player {
 
     private int id;
-    private Node position;
+    private Square position;
     private int fences;
 
-    public Player(Node position,int id) {
+    public Player(Square position, int id) {
         this.position = position;
         this.id = id;
         fences = 10;
@@ -14,7 +14,7 @@ public class Player {
         return fences;
     }
 
-    public Node getPosition() {
+    public Square getPosition() {
         return position;
     }
 
@@ -26,7 +26,7 @@ public class Player {
         fences = fences-1;
     }
 
-    public void setPosition(Node position) {
+    public void setPosition(Square position) {
         this.position = position;
     }
 }

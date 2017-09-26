@@ -4,65 +4,65 @@ import java.util.*;
 
 public class Board {
 
-    private Map<Node,Set<Node>> edges;
-    private ArrayList<Node> nodes;
+    private Map<Square,Set<Square>> edges;
+    private ArrayList<Square> squares;
     private char[][] graphicBoard;
     private Player player1;
     private Player player2;
 
-    public Board() {
+    public Board() throws Exception {
         edges = new HashMap<>();
         graphicBoard = new char[18][18];
         createNodes();
         createEdges();
-        player1 = new Player(getNode("E3"),0);
-        player2 = new Player(getNode("E5"),1);
+        player1 = new Player(getSquare("E3"),0);
+        player2 = new Player(getSquare("E5"),1);
     }
 
     private void createNodes() {
-        nodes = new ArrayList<>(81);
+        squares = new ArrayList<>(81);
         for(int i = 1; i <= 9; ++i) {
             for(int j = 1; j <= 9; ++j) {
-                Node n = new Node(j,i);
-                nodes.add(n.getUnaryCoord(),n);
+                Square n = new Square(j,i);
+                squares.add(n.getUnaryCoord(),n);
             }
         }
     }
 
     private void createEdges() {
-        Set<Node> v;
+        Set<Square> v;
         for(int i = 1; i <= 9; ++i) {
             for(int j = 1; j <= 9; ++j) {
                 v = new HashSet<>();
-                Node n = nodes.get((j-1)*9+i-1);
+                Square n = squares.get((j-1)*9+i-1);
                 int coordX = n.getCoordinateX();
                 int coordY = n.getCoordinateY();
                 int pos = n.getUnaryCoord();
                 if(coordX > 1) {
-                    v.add(nodes.get(pos-1));
+                    v.add(squares.get(pos-1));
                 }
                 if(coordX < 9) {
-                    v.add(nodes.get(pos+1));
+                    v.add(squares.get(pos+1));
                 }
                 if(coordY > 1) {
-                    v.add(nodes.get(pos-9));
+                    v.add(squares.get(pos-9));
                 }
                 if(coordY < 9) {
-                    v.add(nodes.get(pos+9));
+                    v.add(squares.get(pos+9));
                 }
                 edges.put(n,v);
             }
         }
     }
 
-    public Node getNode(String id) {
+    public Square getSquare(String id) throws Exception {
         int x = Common.convertCoordXStr(id.substring(0,1).toUpperCase());
         int y = Integer.parseInt(id.substring(1,2));
-        return nodes.get((y-1)*9+x-1);
+        return squares.get((y-1)*9+x-1);
     }
 
-    public ArrayList<Node> getNodes() {
-        return nodes;
+    public ArrayList<Square> getSquares() {
+        return squares;
     }
 
     public Player getPlayer1() {
@@ -73,17 +73,17 @@ public class Board {
         return player2;
     }
 
-    public Set<Node> getNeighbours(String id) {
-        Node n = getNode(id);
+    public Set<Square> getNeighbours(String id) throws Exception {
+        Square n = getSquare(id);
         return edges.get(n);
     }
 
-    public Set<Node> getNeighbours(Node n) {
+    public Set<Square> getNeighbours(Square n) {
         return edges.get(n);
     }
 
-    private void removeNeighbour(Node n1, Node n2) {
-        Set<Node> neighbours = edges.get(n1);
+    private void removeNeighbour(Square n1, Square n2) {
+        Set<Square> neighbours = edges.get(n1);
         neighbours.remove(n2);
         edges.replace(n1,neighbours);
 
@@ -92,7 +92,7 @@ public class Board {
         edges.replace(n2,neighbours);
     }
 
-    public Pair<int[],Integer> bfs(Node source) {
+    public Pair<int[],Integer> bfs(Square source) {
         int distance[] = new int[81];
         int previous[] = new int[81];
         boolean visited[] = new boolean[81];
@@ -106,15 +106,15 @@ public class Board {
         visited[sourceCoord] = true;
         distance[sourceCoord] = 0;
         previous[sourceCoord] = -1;
-        Queue<Node> q = new LinkedList<>();
+        Queue<Square> q = new LinkedList<>();
         q.add(source);
-        Node n;
+        Square n;
         int index1, index2 = 0;
         boolean goal = false;
         while(!q.isEmpty() && !goal) {
             n = q.poll();
             index1 = n.getUnaryCoord();
-            for (Node i : getNeighbours(n)) {
+            for (Square i : getNeighbours(n)) {
                 index2 = i.getUnaryCoord();
                 if (index2 >= 72 && index2 <= 80) {
                     goal = true;
@@ -141,8 +141,8 @@ public class Board {
         return true;
     }
 
-    private void addNeighbour(Node n1, Node n2) {
-        Set<Node> aux = edges.get(n1);
+    private void addNeighbour(Square n1, Square n2) {
+        Set<Square> aux = edges.get(n1);
         aux.add(n2);
         edges.replace(n1,aux);
         aux = edges.get(n2);
@@ -151,16 +151,21 @@ public class Board {
     }
 
     public boolean addFence(String id) {
-        Node n1 = getNode(id.substring(0,2));
+        Square n1 = null;
+        try {
+            n1 = getSquare(id.substring(0,2));
+        } catch (Exception e) {
+            return false;
+        }
         if(n1.getCoordinateX() == 9 || n1.getCoordinateY() == 9) return false;
-        Node n2 = nodes.get(n1.getUnaryCoord()+9);
-        Node n3 = nodes.get(n2.getUnaryCoord()+1);
-        Node n4 = nodes.get(n1.getUnaryCoord()+1);
+        Square n2 = squares.get(n1.getUnaryCoord()+9);
+        Square n3 = squares.get(n2.getUnaryCoord()+1);
+        Square n4 = squares.get(n1.getUnaryCoord()+1);
         int auxx = ((n1.getCoordinateX()-1)*2);
         int auxy = (16-((n1.getCoordinateY()-1)*2));
         if(id.substring(2,3).toLowerCase().equals("h")) {
             if((!edges.get(n1).contains(n2) || !edges.get(n4).contains(n3)) ||
-                    (!edges.get(n1).contains(n4) && !edges.get(n2).contains(n3))) {
+                    (!edges.get(n1).contains(n4) && !edges.get(n2).contains(n3) && n1.isFilled())) {
                 return false;
             }
             removeNeighbour(n1, n2);
@@ -170,6 +175,7 @@ public class Board {
                 addNeighbour(n3,n4);
                 return false;
             }
+            n1.setFilled();
             auxy = auxy-1;
             for(int i = 0; i < 3; ++i) {
                 graphicBoard[auxy][auxx+i] = '-';
@@ -177,8 +183,8 @@ public class Board {
             return true;
         }
         else if (id.substring(2,3).toLowerCase().equals("v")) {
-            if((!edges.get(n1).contains(n4) && !edges.get(n2).contains(n3)) ||
-                    (!edges.get(n1).contains(n2) && !edges.get(n4).contains(n3))) {
+            if((!edges.get(n1).contains(n4) || !edges.get(n2).contains(n3)) ||
+                    (!edges.get(n1).contains(n2) && !edges.get(n4).contains(n3) && n1.isFilled())) {
                 return false;
             }
             removeNeighbour(n1, n4);
@@ -188,6 +194,7 @@ public class Board {
                 addNeighbour(n2,n3);
                 return false;
             }
+            n1.setFilled();
             auxx = auxx+1;
             for(int i = 0; i < 3; ++i) {
                 graphicBoard[auxy-i][auxx] = '|';
@@ -197,7 +204,7 @@ public class Board {
         return false;
     }
 
-    private boolean checkMove(Node pos, Node dest) {
+    private boolean checkMove(Square pos, Square dest) {
         return getNeighbours(pos).contains(dest);
     }
 
@@ -207,16 +214,21 @@ public class Board {
     }
 
     public boolean movePlayer(int idPlayer, String position) {
-        Node src = getPlayerTurn(idPlayer).getPosition();
-        Node dest = getNode(position);
+        Square src = getPlayerTurn(idPlayer).getPosition();
+        Square dest = null;
+        try {
+            dest = getSquare(position);
+        } catch (Exception e) {
+            return false;
+        }
         if(checkMove(src, dest)) {
             getPlayerTurn(idPlayer).setPosition(dest);
-            Node enemy = getPlayerTurn((idPlayer+1)%2).getPosition();
-            Set<Node> enemyNeighbours = getNeighbours(enemy);
-            Set<Node> originNeighbours = getNeighbours(src);
-            Set<Node> playerNeighbours = getNeighbours(dest);
+            Square enemy = getPlayerTurn((idPlayer+1)%2).getPosition();
+            Set<Square> enemyNeighbours = getNeighbours(enemy);
+            Set<Square> originNeighbours = getNeighbours(src);
+            Set<Square> playerNeighbours = getNeighbours(dest);
             if(enemyNeighbours.contains(src)) {
-                for(Node i : enemyNeighbours) {
+                for(Square i : enemyNeighbours) {
                     if(originNeighbours.contains(i)) originNeighbours.remove(i);
                 }
                 if(enemyNeighbours.contains(src)) originNeighbours.add(enemy);
@@ -224,7 +236,7 @@ public class Board {
             }
             if(enemyNeighbours.contains(dest)) {
                 enemyNeighbours.remove(dest);
-                for(Node i : playerNeighbours) {
+                for(Square i : playerNeighbours) {
                     if(!enemyNeighbours.contains(i) && i != enemy) enemyNeighbours.add(i);
                 }
                 edges.replace(enemy,enemyNeighbours);
@@ -242,6 +254,7 @@ public class Board {
 
         for(int i = 0; i < 17; ++i) {
             if(i%2 == 0) System.out.print(10 -(i/2+1) + " ");
+            else System.out.print("  ");
             for(int j = 0; j < 17; ++j) {
                 if(graphicBoard[i][j] == '1' || graphicBoard[i][j] == '2') System.out.print(graphicBoard[i][j]);
                 else if(graphicBoard[i][j] == '-') System.out.print("-");

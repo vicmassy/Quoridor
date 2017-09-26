@@ -1,32 +1,26 @@
+import java.util.List;
+
 public class Node {
+    Node parent;
+    List<Node> children;
 
-    private final String coordXStr;
-    private final int coordX;
-    private final int coordY;
-    private final int unaryCoord;
+    public Node(){
 
-    public Node(int coordX, int coordY) {
-        this.coordXStr = Common.convertCoordX(coordX);
-        this.coordX = coordX;
-        this.coordY = coordY;
-        unaryCoord = (coordY-1)*9+coordX-1;
     }
 
-    public int getCoordinateX() {
-        return coordX;
+    public List<Node> getChildren() {
+        return children;
     }
 
-    public int getCoordinateY() {
-        return coordY;
+    public Node getParent() {
+        return parent;
     }
 
-    public int getUnaryCoord() {
-        return unaryCoord;
+    public void setParent(Node parent) {
+        this.parent = parent;
     }
 
-
-    @Override
-    public String toString() {
-        return coordXStr+coordY;
+    public void setChildren(List<Node> children) {
+        this.children = children;
     }
 }

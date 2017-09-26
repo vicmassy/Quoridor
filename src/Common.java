@@ -1,10 +1,6 @@
-import javafx.util.Pair;
-import java.util.LinkedList;
-import java.util.Queue;
-
 public class Common {
 
-    public static int convertCoordXStr(String coordXStr) {
+    public static int convertCoordXStr(String coordXStr) throws Exception {
         switch (coordXStr) {
             case "A":
                 return 1;
@@ -25,7 +21,7 @@ public class Common {
             case "I":
                 return 9;
             default:
-                return -1;
+                throw new Exception("Error coordinate");
         }
     }
 
@@ -54,7 +50,7 @@ public class Common {
         }
     }
 
-    public static boolean playerWon(Node player1, Node player2) {
+    public static boolean playerWon(Square player1, Square player2) {
         int coordinateY = player1.getCoordinateY();
         int coordinateY2 = player2.getCoordinateY();
         if(coordinateY == 9  || coordinateY2 == 1) return true;
