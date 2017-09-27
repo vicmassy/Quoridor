@@ -1,22 +1,38 @@
 import javafx.util.Pair;
-
 import java.util.*;
 
 public class Board {
 
     private Map<Square,Set<Square>> edges;
     private ArrayList<Square> squares;
+    private Set<String> fences;
     private char[][] graphicBoard;
     private Player player1;
     private Player player2;
+    private final List<String> letters = Arrays.asList("A","B","C","D","E","F","G","H","I");
 
-    public Board() throws Exception {
+    public Board() {
         edges = new HashMap<>();
         graphicBoard = new char[18][18];
         createNodes();
         createEdges();
-        player1 = new Player(getSquare("E3"),0);
-        player2 = new Player(getSquare("E5"),1);
+        player1 = new Player(getSquare("E1"),0);
+        player2 = new Player(getSquare("E9"),1);
+        fences = new HashSet<>();
+        for(Square i : squares) {
+            if(i.getCoordinateY()!= 9 && i.getCoordinateX() != 9) {
+                fences.add(i.toString() + "h");
+                fences.add(i.toString() + "v");
+            }
+        }
+    }
+
+    public Board(Board b) {
+        edges = b.edges;
+        squares = b.squares;
+        graphicBoard = b.graphicBoard;
+        player1 = b.player1;
+        player2 = b.player2;
     }
 
     private void createNodes() {
@@ -55,7 +71,7 @@ public class Board {
         }
     }
 
-    public Square getSquare(String id) throws Exception {
+    public Square getSquare(String id) {
         int x = Common.convertCoordXStr(id.substring(0,1).toUpperCase());
         int y = Integer.parseInt(id.substring(1,2));
         return squares.get((y-1)*9+x-1);
@@ -73,7 +89,7 @@ public class Board {
         return player2;
     }
 
-    public Set<Square> getNeighbours(String id) throws Exception {
+    public Set<Square> getNeighbours(String id) {
         Square n = getSquare(id);
         return edges.get(n);
     }
@@ -151,53 +167,56 @@ public class Board {
     }
 
     public boolean addFence(String id) {
-        Square n1 = null;
-        try {
-            n1 = getSquare(id.substring(0,2));
-        } catch (Exception e) {
-            return false;
-        }
-        if(n1.getCoordinateX() == 9 || n1.getCoordinateY() == 9) return false;
-        Square n2 = squares.get(n1.getUnaryCoord()+9);
-        Square n3 = squares.get(n2.getUnaryCoord()+1);
-        Square n4 = squares.get(n1.getUnaryCoord()+1);
-        int auxx = ((n1.getCoordinateX()-1)*2);
-        int auxy = (16-((n1.getCoordinateY()-1)*2));
-        if(id.substring(2,3).toLowerCase().equals("h")) {
-            if((!edges.get(n1).contains(n2) || !edges.get(n4).contains(n3)) ||
-                    (!edges.get(n1).contains(n4) && !edges.get(n2).contains(n3) && n1.isFilled())) {
-                return false;
+        String pos = id.substring(0,1).toUpperCase()+id.substring(1,2)+id.substring(2,3).toLowerCase();
+        if(fences.contains(pos)) {
+            Square n1 = getSquare(id.substring(0,2));
+            Square n2 = squares.get(n1.getUnaryCoord()+9);
+            Square n3 = squares.get(n2.getUnaryCoord()+1);
+            Square n4 = squares.get(n1.getUnaryCoord()+1);
+            int auxx = ((n1.getCoordinateX()-1)*2);
+            int auxy = (16-((n1.getCoordinateY()-1)*2));
+            fences.remove(pos);
+            if(pos.substring(2,3).equals("h")) {
+                removeNeighbour(n1,n2);
+                removeNeighbour(n3,n4);
+                if(!checkPath()) {
+                    addNeighbour(n1,n2);
+                    addNeighbour(n3,n4);
+                    return false;
+                }
+                n1.setFilled();
+                auxy = auxy-1;
+                for(int i = 0; i < 3; ++i) {
+                    graphicBoard[auxy][auxx+i] = '-';
+                }
+                fences.remove(n1.toString()+"v");
+                if(n2.getCoordinateX() != 9) {
+                    fences.remove(n4.toString()+"h");
+                }
+                if(n1.getCoordinateX() > 1) {
+                   fences.remove(squares.get(n1.getUnaryCoord()-1).toString()+"h");
+                }
             }
-            removeNeighbour(n1, n2);
-            removeNeighbour(n3, n4);
-            if(!checkPath()) {
-                addNeighbour(n1,n2);
-                addNeighbour(n3,n4);
-                return false;
-            }
-            n1.setFilled();
-            auxy = auxy-1;
-            for(int i = 0; i < 3; ++i) {
-                graphicBoard[auxy][auxx+i] = '-';
-            }
-            return true;
-        }
-        else if (id.substring(2,3).toLowerCase().equals("v")) {
-            if((!edges.get(n1).contains(n4) || !edges.get(n2).contains(n3)) ||
-                    (!edges.get(n1).contains(n2) && !edges.get(n4).contains(n3) && n1.isFilled())) {
-                return false;
-            }
-            removeNeighbour(n1, n4);
-            removeNeighbour(n2, n3);
-            if(!checkPath()) {
-                addNeighbour(n1,n4);
-                addNeighbour(n2,n3);
-                return false;
-            }
-            n1.setFilled();
-            auxx = auxx+1;
-            for(int i = 0; i < 3; ++i) {
-                graphicBoard[auxy-i][auxx] = '|';
+            else {
+                removeNeighbour(n1, n4);
+                removeNeighbour(n2, n3);
+                if(!checkPath()) {
+                    addNeighbour(n1,n4);
+                    addNeighbour(n2,n3);
+                    return false;
+                }
+                n1.setFilled();
+                auxx = auxx+1;
+                for(int i = 0; i < 3; ++i) {
+                    graphicBoard[auxy-i][auxx] = '|';
+                }
+                fences.remove(n1.toString()+"v");
+                if(n2.getCoordinateY() != 9) {
+                    fences.remove(n2.toString()+"v");
+                }
+                if(n1.getCoordinateY() > 1) {
+                    fences.remove(squares.get(n1.getUnaryCoord()-9).toString()+"v");
+                }
             }
             return true;
         }
@@ -246,6 +265,15 @@ public class Board {
             return true;
         }
         return false;
+    }
+
+    public Set<String> getPossibleMoves(Player p) {
+        Set<String> moves = new HashSet<>();
+        for(Square i : getNeighbours(p.getPosition())) {
+            moves.add(i.toString());
+        }
+
+        return moves;
     }
 
     public void print() {

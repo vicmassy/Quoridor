@@ -1,6 +1,6 @@
 public class Common {
 
-    public static int convertCoordXStr(String coordXStr) throws Exception {
+    public static int convertCoordXStr(String coordXStr) {
         switch (coordXStr) {
             case "A":
                 return 1;
@@ -21,7 +21,7 @@ public class Common {
             case "I":
                 return 9;
             default:
-                throw new Exception("Error coordinate");
+                return -1;
         }
     }
 
