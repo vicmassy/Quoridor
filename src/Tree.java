@@ -1,5 +1,5 @@
 public class Tree {
-    /*private Node root;
+    private Node root;
 
     public Tree() {
         root = new Node();
@@ -19,5 +19,5 @@ public class Tree {
 
     public  void addChild(Node parent, Node child) {
         parent.getChildren().add(child);
-    }*/
+    }
 }

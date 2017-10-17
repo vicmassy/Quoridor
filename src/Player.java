@@ -10,6 +10,12 @@ public class Player {
         fences = 10;
     }
 
+    public Player(Player player) {
+        this.id = player.getId();
+        this.position = new Square(player.getPosition());
+        this.fences = player.getFences();
+    }
+
     public int getFences() {
         return fences;
     }

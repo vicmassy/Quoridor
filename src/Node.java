@@ -1,8 +1,10 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Node {
-    /*State state;
+    State state;
     Node parent;
     List<Node> children;
 
@@ -52,6 +54,16 @@ public class Node {
 
     public void setChildren(List<Node> children) {
         this.children = children;
-    }*/
+    }
+
+    public Node getRandomChildNode() {
+        int noOfPossibleMoves = this.children.size();
+        int selectRandom = (int) (Math.random() * ((noOfPossibleMoves - 1) + 1));
+        return this.children.get(selectRandom);
+    }
+
+    public Node getChildWithMaxScore() {
+        return Collections.max(this.children, Comparator.comparing(c -> c.getState().getVisitCount()));
+    }
 
 }

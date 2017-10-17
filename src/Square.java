@@ -4,14 +4,19 @@ public class Square {
     private final int coordX;
     private final int coordY;
     private final int unaryCoord;
-    private boolean filled;
 
     public Square(int coordX, int coordY) {
         this.coordXStr = Common.convertCoordX(coordX);
         this.coordX = coordX;
         this.coordY = coordY;
         unaryCoord = (coordY-1)*9+coordX-1;
-        filled = false;
+    }
+
+    public Square(Square s) {
+        this.coordXStr = s.coordXStr;
+        this.coordX = s.getCoordinateX();
+        this.coordY = s.getCoordinateY();
+        this.unaryCoord = s.getUnaryCoord();
     }
 
     public int getCoordinateX() {
@@ -24,14 +29,6 @@ public class Square {
 
     public int getUnaryCoord() {
         return unaryCoord;
-    }
-
-    public boolean isFilled() {
-        return filled;
-    }
-
-    public void setFilled() {
-        filled = true;
     }
 
     @Override

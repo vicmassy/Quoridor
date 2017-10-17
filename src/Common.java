@@ -50,10 +50,4 @@ public class Common {
         }
     }
 
-    public static boolean playerWon(Square player1, Square player2) {
-        int coordinateY = player1.getCoordinateY();
-        int coordinateY2 = player2.getCoordinateY();
-        if(coordinateY == 9  || coordinateY2 == 1) return true;
-        return false;
-    }
 }
