@@ -62,9 +62,8 @@ public class State {
     public List<State> getAllPossibleStates() {
         List<State> possibleStates = new ArrayList<>();
         List<String> availablePositions = this.board.getPossibleMoves((player+1)%2);
-        State newState;
         for (String p : availablePositions) {
-            newState = new State(this.board);
+            State newState = new State(this.board);
             newState.setPlayer((this.player+1)%2);
             newState.getBoard().performMove(newState.getPlayer(), p);
             possibleStates.add(newState);

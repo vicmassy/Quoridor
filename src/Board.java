@@ -31,17 +31,21 @@ public class Board {
     }
 
     public Board(Board b) {
-        this.edges = new HashMap<>(b.getEdges());
-        this.squares = new ArrayList<>(b.getSquares());
+        this.edges = new HashMap<>();
+        Set<String> temp = b.edges.keySet();
+        for (String s : temp) {
+            this.edges.put(s,new HashSet<>(b.edges.get(s)));
+        }
+        this.squares = new ArrayList<>(b.squares);
         this.graphicBoard = new char[18][18];
         for(int i = 0; i < 18; ++i) {
             for(int j = 0; j < 18; ++j) {
                 this.graphicBoard[i][j] = b.graphicBoard[i][j];
             }
         }
-        this.player1 = new Player(b.getPlayer1());
-        this.player2 = new Player(b.getPlayer2());
-        this.fences = new HashSet<>(b.getFences());
+        this.player1 = new Player(b.player1);
+        this.player2 = new Player(b.player2);
+        this.fences = new HashSet<>(b.fences);
     }
 
     private void createNodes() {
@@ -111,7 +115,6 @@ public class Board {
     }
 
     public Set<String> getNeighbours(String id) {
-        Set<String> s = edges.get(id);
         return edges.get(id);
     }
 
@@ -125,7 +128,7 @@ public class Board {
         edges.replace(n2.toString(),neighbours);
     }
 
-    public Pair<int[],Integer> bfs(Square source) {
+    public Pair<int[],Integer> bfs(Square source, int playerId) {
         int distance[] = new int[81];
         int previous[] = new int[81];
         boolean visited[] = new boolean[81];
@@ -150,7 +153,7 @@ public class Board {
             for (String s : getNeighbours(n.toString())) {
                 Square i = getSquare(s);
                 index2 = i.getUnaryCoord();
-                if (index2 >= 72 && index2 <= 80) {
+                if ((index2 >= 72 && index2 <= 80 && playerId == 0) || (index2 >= 0 && index2 <= 8 && playerId == 1)) {
                     goal = true;
                     visited[index2] = true;
                     distance[index2] = distance[index1] + 1;
@@ -170,8 +173,8 @@ public class Board {
     }
 
     private boolean checkPath() {
-        if(bfs(player1.getPosition()).getValue() == -1 ||
-                bfs(player2.getPosition()).getValue() == -1) return false;
+        if(bfs(player1.getPosition(),0).getValue() == -1 ||
+                bfs(player2.getPosition(),1).getValue() == -1) return false;
         return true;
     }
 
@@ -193,7 +196,6 @@ public class Board {
             Square n4 = squares.get(n1.getUnaryCoord()+1);
             int auxx = ((n1.getCoordinateX()-1)*2);
             int auxy = (16-((n1.getCoordinateY()-1)*2));
-            fences.remove(pos);
             if(pos.substring(2,3).equals("h")) {
                 removeNeighbour(n1,n2);
                 removeNeighbour(n3,n4);
@@ -202,6 +204,7 @@ public class Board {
                     addNeighbour(n3,n4);
                     return false;
                 }
+                fences.remove(pos);
                 auxy = auxy-1;
                 for(int i = 0; i < 3; ++i) {
                     graphicBoard[auxy][auxx+i] = '-';
@@ -222,6 +225,7 @@ public class Board {
                     addNeighbour(n2,n3);
                     return false;
                 }
+                fences.remove(pos);
                 auxx = auxx+1;
                 for(int i = 0; i < 3; ++i) {
                     graphicBoard[auxy-i][auxx] = '|';

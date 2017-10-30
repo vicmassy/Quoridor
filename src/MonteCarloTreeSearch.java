@@ -7,7 +7,7 @@ public class MonteCarloTreeSearch {
     private int opponent;
 
     public MonteCarloTreeSearch() {
-        this.level = 3;
+        this.level = 50;
     }
 
     public int getLevel() {
@@ -36,7 +36,7 @@ public class MonteCarloTreeSearch {
             // Phase 1 - Selection
             Node promisingNode = selectPromisingNode(rootNode);
             // Phase 2 - Expansion
-            if (promisingNode.getState().getBoard().playerWon() == Board.IN_PROGRESS)
+            if (promisingNode.getChildren().size() == 0 && promisingNode.getState().getBoard().playerWon() == Board.IN_PROGRESS)
                 expandNode(promisingNode);
             // Phase 3 - Simulation
             Node nodeToExplore = promisingNode;

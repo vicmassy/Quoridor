@@ -4,9 +4,9 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Node {
-    State state;
-    Node parent;
-    List<Node> children;
+    private State state;
+    private Node parent;
+    private List<Node> children;
 
     public Node(){
         this.state = new State();
