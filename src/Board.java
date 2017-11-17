@@ -1,4 +1,3 @@
-import javafx.util.Pair;
 import java.util.*;
 
 public class Board {
@@ -104,7 +103,7 @@ public class Board {
         edges.replace(n2.toString(),neighbours);
     }
 
-    public Pair<int[],Integer> bfs(Square source, int playerId) {
+    public boolean bfs(Square source, int playerId) {
         int distance[] = new int[81];
         int previous[] = new int[81];
         boolean visited[] = new boolean[81];
@@ -144,13 +143,13 @@ public class Board {
                 }
             }
         }
-        if(!goal) return new Pair<>(new int[0],-1);
-        return new Pair<>(previous,index2);
+        if(!goal) return false;
+        return true;
     }
 
     private boolean checkPath() {
-        if(bfs(player1.getPosition(),0).getValue() == -1 ||
-                bfs(player2.getPosition(),1).getValue() == -1) return false;
+        if(!bfs(player1.getPosition(),0) ||
+                !bfs(player2.getPosition(),1)) return false;
         return true;
     }
 
