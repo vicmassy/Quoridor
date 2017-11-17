@@ -8,9 +8,7 @@ public class State {
     private int player;
     private double winScore;
 
-    public State() {
-        board = new Board();
-    }
+    public State() {}
 
     public State(State state) {
         this.board = new Board(state.getBoard());

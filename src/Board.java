@@ -90,30 +90,6 @@ public class Board {
         return squares.get((y-1)*9+x-1);
     }
 
-    public Map<String, Set<String>> getEdges() {
-        return edges;
-    }
-
-    public Set<String> getFences() {
-        return fences;
-    }
-
-    public char[][] getGraphicBoard() {
-        return graphicBoard;
-    }
-
-    public ArrayList<Square> getSquares() {
-        return squares;
-    }
-
-    public Player getPlayer1() {
-        return player1;
-    }
-
-    public Player getPlayer2() {
-        return player2;
-    }
-
     public Set<String> getNeighbours(String id) {
         return edges.get(id);
     }
@@ -284,7 +260,7 @@ public class Board {
     }
 
     public List<String> getPossibleMoves(int player) {
-        List<String> moves = new LinkedList<>();
+        List<String> moves = new ArrayList<>();
         if(player == 0) {
             moves.addAll(getNeighbours(player1.getPosition().toString()));
             if(player1.getFences() > 0) moves.addAll(fences);

@@ -3,36 +3,20 @@ import java.util.List;
 public class MonteCarloTreeSearch {
 
     private static final int WIN_SCORE = 10;
-    private int level;
-    private int opponent;
 
-    public MonteCarloTreeSearch() {
-        this.level = 50;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    private int getMillisForCurrentLevel() {
-        return 2 * (this.level - 1) + 1;
-    }
+    public MonteCarloTreeSearch() {}
 
     public Board findNextMove(Board board, int player) {
-        long start = System.currentTimeMillis();
-        long end = start + 60 * getMillisForCurrentLevel();
 
-        opponent = (player+1)%2;
+        int opponent = (player+1)%2;
         Tree tree = new Tree();
         Node rootNode = tree.getRoot();
         rootNode.getState().setBoard(board);
         rootNode.getState().setPlayer(opponent);
+        int simulations = 0;
 
-        while (System.currentTimeMillis() < end) {
+        while (simulations < 1000) {
+            ++simulations;
             // Phase 1 - Selection
             Node promisingNode = selectPromisingNode(rootNode);
             // Phase 2 - Expansion
