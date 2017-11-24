@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class State {
 
@@ -63,8 +64,9 @@ public class State {
         for (String p : availablePositions) {
             State newState = new State(this.board);
             newState.setPlayer((this.player+1)%2);
-            newState.getBoard().performMove(newState.getPlayer(), p);
-            possibleStates.add(newState);
+            if(newState.getBoard().performMove(newState.getPlayer(), p)) {
+                possibleStates.add(newState);
+            }
         }
         return possibleStates;
     }
@@ -79,10 +81,15 @@ public class State {
         }
     }
 
+    //TODO: fix overlapping fences due to neighbours face to face
     public void randomPlay() {
+        Random rand = new Random();
         List<String> availablePositions = this.board.getPossibleMoves(player);
-        int totalPossibilities = availablePositions.size();
-        int selectRandom = (int) (Math.random() * ((totalPossibilities - 1) + 1));
+        this.board.print();
+        if(availablePositions.size() == 0) {
+            System.out.println(this.board.checkPath());
+        }
+        int selectRandom = rand.nextInt(availablePositions.size());
         this.board.performMove(this.player, availablePositions.get(selectRandom));
     }
 

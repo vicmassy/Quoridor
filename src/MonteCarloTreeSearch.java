@@ -15,7 +15,7 @@ public class MonteCarloTreeSearch {
         rootNode.getState().setPlayer(opponent);
         int simulations = 0;
 
-        while (simulations < 5000) {
+        while (simulations < 10000) {
             ++simulations;
             // Phase 1 - Selection
             Node promisingNode = selectPromisingNode(rootNode);
@@ -25,12 +25,12 @@ public class MonteCarloTreeSearch {
             // Phase 3 - Simulation
             Node nodeToExplore = promisingNode;
             if (promisingNode.getChildren().size() > 0) {
-                nodeToExplore = promisingNode.getRandomChildNode();
+                nodeToExplore = selectPromisingNode(promisingNode);
             }
             int playoutResult = simulateRandomPlayout(nodeToExplore);
             // Phase 4 - Update
             backPropagation(nodeToExplore, playoutResult);
-            System.out.println(simulations);
+            if(simulations%1000 == 0) System.out.print(simulations + " ");
         }
         /*Node winnerNode = rootNode.getChildWithMaxScore();
         tree.setRoot(winnerNode);*/

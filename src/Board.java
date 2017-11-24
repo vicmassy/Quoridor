@@ -18,7 +18,7 @@ public class Board {
         graphicBoard = new char[18][18];
         createNodes();
         createEdges();
-        player1 = new Player(getSquare("E1"),0);
+        player1 = new Player(getSquare("E7"),0);
         player2 = new Player(getSquare("E9"),1);
         fences = new HashSet<>();
         for(Square i : squares) {
@@ -120,20 +120,18 @@ public class Board {
         Queue<Square> q = new LinkedList<>();
         q.add(source);
         Square n;
-        int index1, index2 = 0;
-        boolean goal = false;
-        while(!q.isEmpty() && !goal) {
+        int index1, index2;
+        while(!q.isEmpty()) {
             n = q.poll();
             index1 = n.getUnaryCoord();
             for (String s : getNeighbours(n.toString())) {
                 Square i = getSquare(s);
                 index2 = i.getUnaryCoord();
                 if ((index2 >= 72 && index2 <= 80 && playerId == 0) || (index2 >= 0 && index2 <= 8 && playerId == 1)) {
-                    goal = true;
                     visited[index2] = true;
                     distance[index2] = distance[index1] + 1;
                     previous[index2] = index1;
-                    break;
+                    return true;
                 }
                 else if(!visited[index2]) {
                     visited[index2] = true;
@@ -143,8 +141,7 @@ public class Board {
                 }
             }
         }
-        if(!goal) return false;
-        return true;
+        return false;
     }
 
     private boolean checkPath() {
@@ -271,9 +268,9 @@ public class Board {
         return moves;
     }
 
-    public void performMove(int player, String pos) {
-        if(pos.length() == 2) movePlayer(player,pos);
-        else addFence(player, pos);
+    public boolean performMove(int player, String pos) {
+        if(pos.length() == 2) return movePlayer(player,pos);
+        else return addFence(player, pos);
     }
 
     public int playerWon() {
