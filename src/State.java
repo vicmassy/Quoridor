@@ -81,14 +81,9 @@ public class State {
         }
     }
 
-    //TODO: fix overlapping fences due to neighbours face to face
     public void randomPlay() {
         Random rand = new Random();
         List<String> availablePositions = this.board.getPossibleMoves(player);
-        this.board.print();
-        if(availablePositions.size() == 0) {
-            System.out.println(this.board.checkPath());
-        }
         int selectRandom = rand.nextInt(availablePositions.size());
         this.board.performMove(this.player, availablePositions.get(selectRandom));
     }

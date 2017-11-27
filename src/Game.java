@@ -17,7 +17,7 @@ public class Game {
         String input;
         while(board.playerWon() == Board.IN_PROGRESS) {
             board.print();
-            System.out.println("Player " + (turn+1) + " turn: " + board.getNeighbours(board.getPlayerTurn(turn).getPosition().toString()));
+            System.out.println("Player " + (turn+1) + " turn: " + board.getPlayerTurn(turn).getNeighbours());
             System.out.println("Nº Fences: " + board.getPlayerTurn(turn).getFences());
             if(turn == 0) {
                 input = scanner.nextLine();
