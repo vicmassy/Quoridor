@@ -27,7 +27,10 @@ public class Game {
                 }
             }
             else {
+                long startTime = System.currentTimeMillis();
                 board = mcts.findNextMove(board,turn);
+                long endTime = System.currentTimeMillis();
+                System.out.println("Decision time: " + (endTime-startTime)/60000 + " min");
             }
             turn = (turn+1)%2;
         }

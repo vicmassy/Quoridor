@@ -4,36 +4,50 @@ public class MonteCarloTreeSearch {
 
     private static final int WIN_SCORE = 10;
 
-    public MonteCarloTreeSearch() {}
+    public MonteCarloTreeSearch() {
+    }
 
     public Board findNextMove(Board board, int player) {
-
-        int opponent = (player+1)%2;
+        Board originalBoard = new Board(board);
+        int opponent = (player + 1) % 2;
         Tree tree = new Tree();
         Node rootNode = tree.getRoot();
-        rootNode.getState().setBoard(board);
-        rootNode.getState().setPlayer(opponent);
+        rootNode.setPlayer(opponent);
         int simulations = 0;
 
-        while (simulations < 250) {
+        while (simulations < 5000) {
+            board = new Board(originalBoard);
             ++simulations;
             // Phase 1 - Selection
             Node promisingNode = selectPromisingNode(rootNode);
+            if(simulations > 1) {
+                board.performMove(promisingNode.getPlayer(), promisingNode.getMove());
+            }
             // Phase 2 - Expansion
-            if (promisingNode.getChildren().size() == 0 && promisingNode.getState().getBoard().playerWon() == Board.IN_PROGRESS)
-                expandNode(promisingNode);
+            if (promisingNode.getChildren().size() == 0 && board.playerWon() == Board.IN_PROGRESS)
+                expandNode(promisingNode, board);
             // Phase 3 - Simulation
-            Node nodeToExplore = promisingNode;
+            Board tmpBoard;
+            for(Node child : promisingNode.getChildren()) {
+                tmpBoard = new Board(board);
+                tmpBoard.performMove(child.getPlayer(),child.getMove());
+                int playoutResult = simulateRandomPlayout(child,tmpBoard);
+                backPropagation(child, playoutResult);
+            }
+            /*Node nodeToExplore = promisingNode;
             if (promisingNode.getChildren().size() > 0) {
                 nodeToExplore = selectPromisingNode(promisingNode);
             }
-            int playoutResult = simulateRandomPlayout(nodeToExplore);
+            board.performMove(nodeToExplore.getPlayer(),nodeToExplore.getMove());
+            int playoutResult = simulateRandomPlayout(nodeToExplore, board);
             // Phase 4 - Update
-            backPropagation(nodeToExplore, playoutResult);
-            //if(simulations%1000 == 0) System.out.print(simulations + " ");
-            System.out.println(simulations);
+            backPropagation(nodeToExplore, playoutResult);*/
+            if(simulations%1000 == 0) System.out.print(simulations + " ");
         }
-        return rootNode.getChildWithMaxScore().getState().getBoard();
+        Node bestNode = rootNode.getChildWithMaxScore();
+        originalBoard.performMove(bestNode.getPlayer(),bestNode.getMove());
+        System.out.println();
+        return originalBoard;
     }
 
     private Node selectPromisingNode(Node rootNode) {
@@ -44,12 +58,12 @@ public class MonteCarloTreeSearch {
         return node;
     }
 
-    private void expandNode(Node node) {
-        List<State> possibleStates = node.getState().getAllPossibleStates();
-        possibleStates.forEach(state -> {
-            Node newNode = new Node(state);
+    private void expandNode(Node node, Board board) {
+        List<Node> possibleNodes = node.getAllPossibleNodes(board);
+        possibleNodes.forEach(child -> {
+            Node newNode = new Node(child);
             newNode.setParent(node);
-            newNode.getState().setPlayer(node.getState().getOpponent());
+            newNode.setPlayer(node.getOpponent());
             node.getChildren().add(newNode);
         });
     }
@@ -57,21 +71,20 @@ public class MonteCarloTreeSearch {
     private void backPropagation(Node nodeToExplore, int playerNo) {
         Node tempNode = nodeToExplore;
         while (tempNode != null) {
-            tempNode.getState().incrementVisit();
-            if (tempNode.getState().getPlayer() == playerNo)
-                tempNode.getState().addScore(WIN_SCORE);
+            tempNode.incrementVisit();
+            if (tempNode.getPlayer() == playerNo)
+                tempNode.addScore(WIN_SCORE);
             tempNode = tempNode.getParent();
         }
     }
 
-    private int simulateRandomPlayout(Node node) {
+    private int simulateRandomPlayout(Node node, Board board) {
         Node tempNode = new Node(node);
-        State tempState = tempNode.getState();
-        int boardStatus = tempState.getBoard().playerWon();
+        int boardStatus = board.playerWon();
         while (boardStatus == Board.IN_PROGRESS) {
-            tempState.togglePlayer();
-            tempState.randomPlay();
-            boardStatus = tempState.getBoard().playerWon();
+            tempNode.togglePlayer();
+            tempNode.randomPlay(board);
+            boardStatus = board.playerWon();
         }
         return boardStatus;
     }

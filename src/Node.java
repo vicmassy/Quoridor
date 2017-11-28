@@ -1,33 +1,30 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Node {
-    private State state;
+    private String move;
+    private int player;
+    private int visitCount;
+    private int winScore;
     private Node parent;
     private List<Node> children;
 
-    public Node(){
-        this.state = new State();
+    public Node() {
         children = new ArrayList<>();
     }
 
-    public Node(State state) {
+    /*public Node(State state) {
         this.state = state;
         children = new ArrayList<>();
-    }
-
-    public Node(State state, Node parent, List<Node> children){
-        this.state = state;
-        this.parent = parent;
-        this.children = children;
-    }
+    }*/
 
     public Node(Node node) {
+        this.move = node.move;
+        this.player = node.player;
+        this.visitCount = node.visitCount;
+        this.winScore = node.winScore;
         this.children = new ArrayList<>();
-        this.state = new State(node.getState());
-        if(node.getParent() != null) {
+        //this.state = new State(node.getState());
+        if (node.getParent() != null) {
             this.parent = node.getParent();
         }
         List<Node> childArray = node.getChildren();
@@ -36,9 +33,9 @@ public class Node {
         }
     }
 
-    public State getState() {
+    /*public State getState() {
         return state;
-    }
+    }*/
 
     public List<Node> getChildren() {
         return children;
@@ -46,6 +43,30 @@ public class Node {
 
     public Node getParent() {
         return parent;
+    }
+
+    public int getPlayer() {
+        return player;
+    }
+
+    public String getMove() {
+        return move;
+    }
+
+    public int getVisitCount() {
+        return visitCount;
+    }
+
+    public int getWinScore() {
+        return winScore;
+    }
+
+    public void setPlayer(int player) {
+        this.player = player;
+    }
+
+    public void setMove(String move) {
+        this.move = move;
     }
 
     public void setParent(Node parent) {
@@ -62,8 +83,47 @@ public class Node {
         return this.children.get(selectRandom);
     }
 
+    public void incrementVisit() {
+        visitCount += 1;
+    }
+
+    public void addScore(int score) {
+        winScore += score;
+    }
+
+    List<Node> getAllPossibleNodes(Board board) {
+        List<Node> possibleNodes = new ArrayList<>();
+        List<String> availablePositions = board.getPossibleMoves((player+1)%2);
+        Board tmpBoard = new Board(board);
+        for (String p : availablePositions) {
+            Node newNode = new Node();
+            newNode.setPlayer((this.player+1)%2);
+            newNode.setMove(p);
+            if(tmpBoard.performMove(newNode.getPlayer(), p)) {
+                possibleNodes.add(newNode);
+            }
+            tmpBoard = new Board(board);
+        }
+        return possibleNodes;
+    }
+
+    public int getOpponent() {
+        return (player+1)%2;
+    }
+
+    public void togglePlayer() {
+        player = (player+1)%2;
+    }
+
     public Node getChildWithMaxScore() {
-        return Collections.max(this.children, Comparator.comparing(c -> c.getState().getVisitCount()));
+        return Collections.max(this.children, Comparator.comparing(c -> c.visitCount));
+    }
+
+    public void randomPlay(Board board) {
+        Random rand = new Random();
+        List<String> availablePositions = board.getPossibleMoves(player);
+        int selectRandom = rand.nextInt(availablePositions.size());
+        board.performMove(this.player, availablePositions.get(selectRandom));
     }
 
 }
