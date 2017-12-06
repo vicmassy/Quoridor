@@ -1,4 +1,4 @@
-import java.util.List;
+import java.util.*;
 
 public class MonteCarloTreeSearch {
 
@@ -15,45 +15,42 @@ public class MonteCarloTreeSearch {
         rootNode.setPlayer(opponent);
         int simulations = 0;
 
-        while (simulations < 5000) {
+        while (simulations < 50000) {
             board = new Board(originalBoard);
             ++simulations;
+
             // Phase 1 - Selection
-            Node promisingNode = selectPromisingNode(rootNode);
-            if(simulations > 1) {
-                board.performMove(promisingNode.getPlayer(), promisingNode.getMove());
-            }
+            Node promisingNode = selectPromisingNode(rootNode, board);
+
             // Phase 2 - Expansion
-            if (promisingNode.getChildren().size() == 0 && board.playerWon() == Board.IN_PROGRESS)
+            if (board.playerWon() == Board.IN_PROGRESS) {
                 expandNode(promisingNode, board);
+            }
+
             // Phase 3 - Simulation
-            Board tmpBoard;
-            for(Node child : promisingNode.getChildren()) {
-                tmpBoard = new Board(board);
-                tmpBoard.performMove(child.getPlayer(),child.getMove());
-                int playoutResult = simulateRandomPlayout(child,tmpBoard);
-                backPropagation(child, playoutResult);
-            }
-            /*Node nodeToExplore = promisingNode;
+            Node nodeToExplore = promisingNode;
             if (promisingNode.getChildren().size() > 0) {
-                nodeToExplore = selectPromisingNode(promisingNode);
+                nodeToExplore = nodeToExplore.getRandomChildNode();
             }
-            board.performMove(nodeToExplore.getPlayer(),nodeToExplore.getMove());
+            board.performMove(nodeToExplore.getPlayer(), nodeToExplore.getMove());
             int playoutResult = simulateRandomPlayout(nodeToExplore, board);
+
             // Phase 4 - Update
-            backPropagation(nodeToExplore, playoutResult);*/
-            if(simulations%1000 == 0) System.out.print(simulations + " ");
+            backPropagation(nodeToExplore, playoutResult);
+            if (simulations % 5000 == 0) System.out.print(simulations + " ");
         }
         Node bestNode = rootNode.getChildWithMaxScore();
-        originalBoard.performMove(bestNode.getPlayer(),bestNode.getMove());
+        originalBoard.performMove(bestNode.getPlayer(), bestNode.getMove());
         System.out.println();
+
         return originalBoard;
     }
 
-    private Node selectPromisingNode(Node rootNode) {
+    private Node selectPromisingNode(Node rootNode, Board board) {
         Node node = rootNode;
         while (node.getChildren().size() != 0) {
             node = UCT.findBestNodeWithUCT(node);
+            board.performMove(node.getPlayer(), node.getMove());
         }
         return node;
     }
@@ -72,7 +69,7 @@ public class MonteCarloTreeSearch {
         Node tempNode = nodeToExplore;
         while (tempNode != null) {
             tempNode.incrementVisit();
-            if (tempNode.getPlayer() == playerNo)
+            if (tempNode.getPlayer() + 1 == playerNo)
                 tempNode.addScore(WIN_SCORE);
             tempNode = tempNode.getParent();
         }

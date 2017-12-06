@@ -20,8 +20,8 @@ public class Board {
         graphicBoard = new char[18][18];
         createNodes();
         createEdges();
-        player1 = new Player(getSquare(POS_P1), 0, getEdges(POS_P1));
-        player2 = new Player(getSquare(POS_P2), 1, getEdges(POS_P2));
+        player1 = new Player(getSquare(POS_P1), P1, getEdges(POS_P1));
+        player2 = new Player(getSquare(POS_P2), P2, getEdges(POS_P2));
         fences = new HashSet<>();
         for (Square i : squares) {
             if (i.getCoordinateY() != 9 && i.getCoordinateX() != 9) {
@@ -89,6 +89,10 @@ public class Board {
         return squares.get((y - 1) * 9 + x - 1);
     }
 
+    public Square getSquare(int unaryCoord) {
+        return squares.get(unaryCoord);
+    }
+
     public Set<String> getEdges(String id) {
         return edges.get(id);
     }
@@ -103,20 +107,19 @@ public class Board {
         edges.replace(n2.toString(), neighbours);
     }
 
-    public boolean bfs(Square source, int playerId) {
+    public boolean bfs(Square source, int playerId, int previous[], int[] endPos) {
         int distance[] = new int[81];
-        //int previous[] = new int[81];
         boolean visited[] = new boolean[81];
         for (int i = 0; i < 81; ++i) {
             distance[i] = Integer.MAX_VALUE;
-            //previous[i] = -1;
+            previous[i] = -1;
             visited[i] = false;
         }
 
         int sourceCoord = source.getUnaryCoord();
         visited[sourceCoord] = true;
         distance[sourceCoord] = 0;
-        //previous[sourceCoord] = -1;
+        previous[sourceCoord] = -1;
         Queue<Square> q = new LinkedList<>();
         q.add(source);
         Square n;
@@ -130,12 +133,13 @@ public class Board {
                 if ((index2 >= 72 && index2 <= 80 && playerId == 0) || (index2 >= 0 && index2 <= 8 && playerId == 1)) {
                     visited[index2] = true;
                     distance[index2] = distance[index1] + 1;
-                    //previous[index2] = index1;
+                    previous[index2] = index1;
+                    endPos[0] = index2;
                     return true;
                 } else if (!visited[index2]) {
                     visited[index2] = true;
                     distance[index2] = distance[index1] + 1;
-                    //previous[index2] = index1;
+                    previous[index2] = index1;
                     q.add(i);
                 }
             }
@@ -144,8 +148,8 @@ public class Board {
     }
 
     private boolean checkPath() {
-        return bfs(player1.getPosition(), 0) &&
-                bfs(player2.getPosition(), 1);
+        return bfs(player1.getPosition(), 0, new int[81], new int[1]) &&
+                bfs(player2.getPosition(), 1, new int[81], new int[1]);
     }
 
     private void addNeighbour(Square n1, Square n2) {

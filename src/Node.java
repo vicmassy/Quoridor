@@ -12,18 +12,12 @@ public class Node {
         children = new ArrayList<>();
     }
 
-    /*public Node(State state) {
-        this.state = state;
-        children = new ArrayList<>();
-    }*/
-
     public Node(Node node) {
         this.move = node.move;
         this.player = node.player;
         this.visitCount = node.visitCount;
         this.winScore = node.winScore;
         this.children = new ArrayList<>();
-        //this.state = new State(node.getState());
         if (node.getParent() != null) {
             this.parent = node.getParent();
         }
@@ -32,10 +26,6 @@ public class Node {
             this.children.add(new Node(child));
         }
     }
-
-    /*public State getState() {
-        return state;
-    }*/
 
     public List<Node> getChildren() {
         return children;
@@ -78,9 +68,9 @@ public class Node {
     }
 
     public Node getRandomChildNode() {
-        int noOfPossibleMoves = this.children.size();
-        int selectRandom = (int) (Math.random() * ((noOfPossibleMoves - 1) + 1));
-        return this.children.get(selectRandom);
+        int possibleMoves = this.children.size();
+        Random rand = new Random();
+        return this.children.get(rand.nextInt(possibleMoves));
     }
 
     public void incrementVisit() {
@@ -116,7 +106,7 @@ public class Node {
     }
 
     public Node getChildWithMaxScore() {
-        return Collections.max(this.children, Comparator.comparing(c -> c.visitCount));
+        return Collections.max(this.children, Comparator.comparing(c -> c.winScore));
     }
 
     public void randomPlay(Board board) {
