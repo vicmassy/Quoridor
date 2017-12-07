@@ -97,6 +97,14 @@ public class Board {
         return edges.get(id);
     }
 
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public Player getPlayer2() {
+        return player2;
+    }
+
     private void removeNeighbour(Square n1, Square n2) {
         Set<String> neighbours = edges.get(n1.toString());
         neighbours.remove(n2.toString());

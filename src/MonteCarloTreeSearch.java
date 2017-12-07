@@ -15,12 +15,25 @@ public class MonteCarloTreeSearch {
         rootNode.setPlayer(opponent);
         int simulations = 0;
 
-        while (simulations < 50000) {
+        while (simulations < 120000) {
             board = new Board(originalBoard);
             ++simulations;
 
             // Phase 1 - Selection
             Node promisingNode = selectPromisingNode(rootNode, board);
+
+            /*if(simulations > 1 && promisingNode.getMove().length() == 2) {
+                if(promisingNode.getPlayer() == 0) {
+                    int src = originalBoard.getPlayer1().getPosition().getCoordinateY();
+                    int dst = board.getPlayer1().getPosition().getCoordinateY();
+                    if (src < dst) promisingNode.addScore(10);
+                }
+                else {
+                    int src = originalBoard.getPlayer2().getPosition().getCoordinateY();
+                    int dst = board.getPlayer2().getPosition().getCoordinateY();
+                    if (src > dst) promisingNode.addScore(10);
+                }
+            }*/
 
             // Phase 2 - Expansion
             if (board.playerWon() == Board.IN_PROGRESS) {
