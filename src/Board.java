@@ -12,8 +12,8 @@ public class Board {
     public static final int IN_PROGRESS = -1;
     public static final int P1 = 0;
     public static final int P2 = 1;
-    private static final String POS_P1 = "E1";
-    private static final String POS_P2 = "E9";
+    private static final String POS_P1 = "E5";
+    private static final String POS_P2 = "E7";
 
     public Board() {
         edges = new HashMap<>();
@@ -115,9 +115,10 @@ public class Board {
         edges.replace(n2.toString(), neighbours);
     }
 
-    public boolean bfs(Square source, int playerId, int previous[], int[] endPos) {
+    public Tuple bfs(Square source, int playerId) {
         int distance[] = new int[81];
         boolean visited[] = new boolean[81];
+        int previous[] = new int[81];
         for (int i = 0; i < 81; ++i) {
             distance[i] = Integer.MAX_VALUE;
             previous[i] = -1;
@@ -142,8 +143,7 @@ public class Board {
                     visited[index2] = true;
                     distance[index2] = distance[index1] + 1;
                     previous[index2] = index1;
-                    endPos[0] = index2;
-                    return true;
+                    return new Tuple<>(true, previous, index2);
                 } else if (!visited[index2]) {
                     visited[index2] = true;
                     distance[index2] = distance[index1] + 1;
@@ -243,12 +243,24 @@ public class Board {
         if(n1.contains(pos2)) {
             n1.remove(pos2);
             n2.remove(pos1);
-            n2.addAll(n1);
-            player1.setNeighbours(n2);
+            int diff = getSquare(pos2).getUnaryCoord()-getSquare(pos1).getUnaryCoord();
+            String jump = getSquare(getSquare(pos2).getUnaryCoord()+diff).toString();
+            Set<String> n1Tmp = new HashSet<>(n1);
+            if(n2.contains(jump)) {
+               n1.add(jump);
+            }
+            else {
+                n1.addAll(n2);
+            }
+            jump = getSquare(getSquare(pos1).getUnaryCoord()-diff).toString();
+            if(n1.contains(jump)) {
+                n2.add(jump);
+            }
+            else {
+                n2.addAll(n1Tmp);
+            }
         }
-        else {
-            player1.setNeighbours(n1);
-        }
+        player1.setNeighbours(n1);
         player2.setNeighbours(n2);
     }
 

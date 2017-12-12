@@ -43,9 +43,7 @@ public class Game {
                         endPos[0] = previous[endPos[0]];
                     }
                     if(!board.performMove(turn, board.getSquare(endPos[0]).toString())) {
-                        int diff = board.getSquare(endPos[0]).getUnaryCoord()-playerPos;
-                        System.out.println(board.getSquare(endPos[0]+diff).toString());
-                        board.performMove(turn, board.getSquare(endPos[0]+diff).toString());
+
                     }
                 }
             }
