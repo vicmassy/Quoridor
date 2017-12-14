@@ -97,6 +97,18 @@ public class Node {
         return possibleNodes;
     }
 
+    List<Node> getMovePossibleNodes(Board board) {
+        List<Node> possibleNodes = new ArrayList<>();
+        Set<String> availablePositions = board.getPlayerTurn((player+1)%2).getNeighbours();
+        for(String s : availablePositions) {
+            Node newNode = new Node();
+            newNode.setPlayer((this.player+1)%2);
+            newNode.setMove(s);
+            possibleNodes.add(newNode);
+        }
+        return possibleNodes;
+    }
+
     public int getOpponent() {
         return (player+1)%2;
     }

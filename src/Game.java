@@ -19,14 +19,14 @@ public class Game {
             board.print();
             System.out.println("Player " + (turn+1) + " turn: " + board.getPlayerTurn(turn).getNeighbours());
             System.out.println("Nº Fences: " + board.getPlayerTurn(turn).getFences());
-            if(turn == 0) {
+            /*if(turn == 0) {
                 input = scanner.nextLine();
                 while (!validInput(input)) {
                     System.out.println("Incorrect movement: " + input);
                     input = scanner.nextLine();
                 }
             }
-            else {
+            else {*/
                 Player p = board.getPlayerTurn(turn);
                 if(p.getFences() > 0) {
                     long startTime = System.currentTimeMillis();
@@ -35,18 +35,17 @@ public class Game {
                     System.out.println("Decision time: " + (endTime - startTime) / 60000 + " min");
                 }
                 else {
-                    int[] previous = new int[81];
-                    int[] endPos = new int[1];
-                    int playerPos = p.getPosition().getUnaryCoord();
-                    board.bfs(p.getPosition(),turn,previous, endPos);
-                    while(previous[endPos[0]] != playerPos) {
-                        endPos[0] = previous[endPos[0]];
+                    Tuple<String,Integer,Integer,Integer> result = new Tuple<>(" ",81, null, null);
+                    for (String s : board.getPossibleMoves(turn)) {
+                        Tuple<Boolean,int[],Integer,Integer> t = board.bfs(board.getSquare(s),turn);
+                        if(t._4 < result._2) {
+                            result._1 = s;
+                            result._2 = t._4;
+                        }
                     }
-                    if(!board.performMove(turn, board.getSquare(endPos[0]).toString())) {
-
-                    }
+                    board.performMove(turn,result._1);
                 }
-            }
+            //}
             turn = (turn+1)%2;
         }
         board.print();

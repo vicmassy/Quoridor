@@ -12,8 +12,8 @@ public class Board {
     public static final int IN_PROGRESS = -1;
     public static final int P1 = 0;
     public static final int P2 = 1;
-    private static final String POS_P1 = "E5";
-    private static final String POS_P2 = "E7";
+    private static final String POS_P1 = "E1";
+    private static final String POS_P2 = "E9";
 
     public Board() {
         edges = new HashMap<>();
@@ -115,7 +115,7 @@ public class Board {
         edges.replace(n2.toString(), neighbours);
     }
 
-    public Tuple bfs(Square source, int playerId) {
+    public Tuple<Boolean, int[], Integer, Integer> bfs(Square source, int playerId) {
         int distance[] = new int[81];
         boolean visited[] = new boolean[81];
         int previous[] = new int[81];
@@ -143,7 +143,7 @@ public class Board {
                     visited[index2] = true;
                     distance[index2] = distance[index1] + 1;
                     previous[index2] = index1;
-                    return new Tuple<>(true, previous, index2);
+                    return new Tuple<>(true, previous, index2, distance[index2]);
                 } else if (!visited[index2]) {
                     visited[index2] = true;
                     distance[index2] = distance[index1] + 1;
@@ -152,12 +152,12 @@ public class Board {
                 }
             }
         }
-        return false;
+        return new Tuple<>(false, null, null, null);
     }
 
     private boolean checkPath() {
-        return bfs(player1.getPosition(), 0, new int[81], new int[1]) &&
-                bfs(player2.getPosition(), 1, new int[81], new int[1]);
+        return bfs(player1.getPosition(), 0)._1 &&
+                bfs(player2.getPosition(), 1)._1;
     }
 
     private void addNeighbour(Square n1, Square n2) {
@@ -240,24 +240,26 @@ public class Board {
         String pos2 = player2.getPosition().toString();
         Set<String> n1 = new HashSet<>(getEdges(pos1));
         Set<String> n2 = new HashSet<>(getEdges(pos2));
-        if(n1.contains(pos2)) {
+        if (n1.contains(pos2)) {
             n1.remove(pos2);
             n2.remove(pos1);
-            int diff = getSquare(pos2).getUnaryCoord()-getSquare(pos1).getUnaryCoord();
-            String jump = getSquare(getSquare(pos2).getUnaryCoord()+diff).toString();
             Set<String> n1Tmp = new HashSet<>(n1);
-            if(n2.contains(jump)) {
-               n1.add(jump);
+            int diff = getSquare(pos2).getUnaryCoord() - getSquare(pos1).getUnaryCoord();
+            if (player2.getPosition().getCoordinateY() > 1 && player2.getPosition().getCoordinateY() < 9) {
+                String jump = getSquare(getSquare(pos2).getUnaryCoord() + diff).toString();
+                if (n2.contains(jump)) {
+                    n1.add(jump);
+                } else {
+                    n1.addAll(n2);
+                }
             }
-            else {
-                n1.addAll(n2);
-            }
-            jump = getSquare(getSquare(pos1).getUnaryCoord()-diff).toString();
-            if(n1.contains(jump)) {
-                n2.add(jump);
-            }
-            else {
-                n2.addAll(n1Tmp);
+            if (player1.getPosition().getCoordinateY() > 1 && player1.getPosition().getCoordinateY() < 9) {
+                String jump = getSquare(getSquare(pos1).getUnaryCoord() - diff).toString();
+                if (n1.contains(jump)) {
+                    n2.add(jump);
+                } else {
+                    n2.addAll(n1Tmp);
+                }
             }
         }
         player1.setNeighbours(n1);

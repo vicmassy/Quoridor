@@ -22,19 +22,6 @@ public class MonteCarloTreeSearch {
             // Phase 1 - Selection
             Node promisingNode = selectPromisingNode(rootNode, board);
 
-            /*if(simulations > 1 && promisingNode.getMove().length() == 2) {
-                if(promisingNode.getPlayer() == 0) {
-                    int src = originalBoard.getPlayer1().getPosition().getCoordinateY();
-                    int dst = board.getPlayer1().getPosition().getCoordinateY();
-                    if (src < dst) promisingNode.addScore(10);
-                }
-                else {
-                    int src = originalBoard.getPlayer2().getPosition().getCoordinateY();
-                    int dst = board.getPlayer2().getPosition().getCoordinateY();
-                    if (src > dst) promisingNode.addScore(10);
-                }
-            }*/
-
             // Phase 2 - Expansion
             if (board.playerWon() == Board.IN_PROGRESS) {
                 expandNode(promisingNode, board);
@@ -43,7 +30,7 @@ public class MonteCarloTreeSearch {
             // Phase 3 - Simulation
             Node nodeToExplore = promisingNode;
             if (promisingNode.getChildren().size() > 0) {
-                nodeToExplore = nodeToExplore.getRandomChildNode();
+                nodeToExplore = promisingNode.getRandomChildNode();
             }
             board.performMove(nodeToExplore.getPlayer(), nodeToExplore.getMove());
             int playoutResult = simulateRandomPlayout(nodeToExplore, board);
