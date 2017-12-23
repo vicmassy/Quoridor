@@ -133,24 +133,10 @@ public class Node {
             board.performMove(player, result._1);
         }
         else {
-            Board tmpBoard = new Board(board);
-            int newDistanceP2 = distanceGoalP2;
-            String move = " ";
-            Tuple<Boolean, int[], Integer, Integer> t;
-            for (String s : board.getFences()) {
-                tmpBoard.performMove(player, s);
-                t = tmpBoard.bfs(board.getSquare(s), p2.getId());
-                if (t._1 && t._4 > newDistanceP2) {
-                    newDistanceP2 = t._4;
-                    move = s;
-                }
-                tmpBoard = new Board(board);
-            }
-            board.performMove(player, move);
-
-            /*Random rand = new Random();
+            List<String> availablePositions = board.getPossibleMoves(player);
+            Random rand = new Random();
             int selectRandom = rand.nextInt(availablePositions.size());
-            board.performMove(this.player, availablePositions.get(selectRandom));*/
+            board.performMove(this.player, availablePositions.get(selectRandom));
         }
     }
 
