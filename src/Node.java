@@ -97,18 +97,6 @@ public class Node {
         return possibleNodes;
     }
 
-    List<Node> getMovePossibleNodes(Board board) {
-        List<Node> possibleNodes = new ArrayList<>();
-        Set<String> availablePositions = board.getPlayerTurn((player+1)%2).getNeighbours();
-        for(String s : availablePositions) {
-            Node newNode = new Node();
-            newNode.setPlayer((this.player+1)%2);
-            newNode.setMove(s);
-            possibleNodes.add(newNode);
-        }
-        return possibleNodes;
-    }
-
     public int getOpponent() {
         return (player+1)%2;
     }
@@ -126,6 +114,44 @@ public class Node {
         List<String> availablePositions = board.getPossibleMoves(player);
         int selectRandom = rand.nextInt(availablePositions.size());
         board.performMove(this.player, availablePositions.get(selectRandom));
+    }
+
+    public void heuristicDecision(Board board) {
+        Player p1 = board.getPlayerTurn(player);
+        Player p2 = board.getPlayerTurn(getOpponent());
+        int distanceGoalP1 = board.bfs(p1.getPosition(), p1.getId())._4;
+        int distanceGoalP2 = board.bfs(p2.getPosition(), p2.getId())._4;
+        if (distanceGoalP1 < distanceGoalP2) {
+            Tuple<String, Integer, Integer, Integer> result = new Tuple<>(" ", 81, null, null);
+            for (String s : p1.getNeighbours()) {
+                Tuple<Boolean, int[], Integer, Integer> t = board.bfs(board.getSquare(s), player);
+                if (t._4 < result._2) {
+                    result._1 = s;
+                    result._2 = t._4;
+                }
+            }
+            board.performMove(player, result._1);
+        }
+        else {
+            Board tmpBoard = new Board(board);
+            int newDistanceP2 = distanceGoalP2;
+            String move = " ";
+            Tuple<Boolean, int[], Integer, Integer> t;
+            for (String s : board.getFences()) {
+                tmpBoard.performMove(player, s);
+                t = tmpBoard.bfs(board.getSquare(s), p2.getId());
+                if (t._1 && t._4 > newDistanceP2) {
+                    newDistanceP2 = t._4;
+                    move = s;
+                }
+                tmpBoard = new Board(board);
+            }
+            board.performMove(player, move);
+
+            /*Random rand = new Random();
+            int selectRandom = rand.nextInt(availablePositions.size());
+            board.performMove(this.player, availablePositions.get(selectRandom));*/
+        }
     }
 
 }

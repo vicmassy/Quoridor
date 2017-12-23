@@ -97,6 +97,10 @@ public class Board {
         return edges.get(id);
     }
 
+    public Set<String> getFences() {
+        return fences;
+    }
+
     public Player getPlayer1() {
         return player1;
     }
@@ -322,6 +326,5 @@ public class Board {
         }
         System.out.println("  A B C D E F G H I");
     }
-
 
 }

@@ -80,10 +80,12 @@ public class MonteCarloTreeSearch {
         int boardStatus = board.playerWon();
         while (boardStatus == Board.IN_PROGRESS) {
             tempNode.togglePlayer();
-            tempNode.randomPlay(board);
+            //tempNode.randomPlay(board);
+            tempNode.heuristicDecision(board);
             boardStatus = board.playerWon();
         }
         return boardStatus;
+
     }
 
 }
