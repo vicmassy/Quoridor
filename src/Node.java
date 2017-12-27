@@ -116,6 +116,8 @@ public class Node {
         board.performMove(this.player, availablePositions.get(selectRandom));
     }
 
+    //TODO: infinite loop problem
+
     public void heuristicDecision(Board board) {
         Player p1 = board.getPlayerTurn(player);
         Player p2 = board.getPlayerTurn(getOpponent());
