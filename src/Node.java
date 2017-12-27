@@ -124,7 +124,7 @@ public class Node {
         int distanceGoalP1 = board.bfs(p1.getPosition(), p1.getId())._4;
         int distanceGoalP2 = board.bfs(p2.getPosition(), p2.getId())._4;
         if (distanceGoalP1 < distanceGoalP2) {
-            Tuple<String, Integer, Integer, Integer> result = new Tuple<>(" ", 81, null, null);
+            Tuple<String, Integer, Integer, Integer> result = new Tuple<>(" ", distanceGoalP1, null, null);
             for (String s : p1.getNeighbours()) {
                 Tuple<Boolean, int[], Integer, Integer> t = board.bfs(board.getSquare(s), player);
                 if (t._4 < result._2) {
