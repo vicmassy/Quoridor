@@ -116,20 +116,18 @@ public class Node {
         board.performMove(this.player, availablePositions.get(selectRandom));
     }
 
-    //TODO: infinite loop problem
-
     public void heuristicDecision(Board board) {
         Player p1 = board.getPlayerTurn(player);
         Player p2 = board.getPlayerTurn(getOpponent());
-        int distanceGoalP1 = board.bfs(p1.getPosition(), p1.getId())._4;
-        int distanceGoalP2 = board.bfs(p2.getPosition(), p2.getId())._4;
-        if (distanceGoalP1 < distanceGoalP2) {
-            Tuple<String, Integer, Integer, Integer> result = new Tuple<>(" ", distanceGoalP1, null, null);
+        int distanceGoalP1 = board.bfs(p1.getPosition(), p1.getId())._2;
+        int distanceGoalP2 = board.bfs(p2.getPosition(), p2.getId())._2;
+        if (distanceGoalP1 <= distanceGoalP2 || p1.getFences() == 0) {
+            Tuple<String, Integer> result = new Tuple<>(" ", 81);
             for (String s : p1.getNeighbours()) {
-                Tuple<Boolean, int[], Integer, Integer> t = board.bfs(board.getSquare(s), player);
-                if (t._4 < result._2) {
+                Tuple<Boolean, Integer> t = board.bfs(board.getSquare(s), player);
+                if (t._2 < result._2) {
                     result._1 = s;
-                    result._2 = t._4;
+                    result._2 = t._2;
                 }
             }
             board.performMove(player, result._1);

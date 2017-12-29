@@ -119,7 +119,12 @@ public class Board {
         edges.replace(n2.toString(), neighbours);
     }
 
-    public Tuple<Boolean, int[], Integer, Integer> bfs(Square source, int playerId) {
+    public Tuple<Boolean, Integer> bfs(Square source, int playerId) {
+        int sourcePos = source.getUnaryCoord();
+        if ((sourcePos >= 72 && sourcePos <= 80 && playerId == 0) || (sourcePos >= 0 && sourcePos <= 8 && playerId == 1)) {
+            return new Tuple<>(true, 0);
+        }
+
         int distance[] = new int[81];
         boolean visited[] = new boolean[81];
         int previous[] = new int[81];
@@ -147,7 +152,7 @@ public class Board {
                     visited[index2] = true;
                     distance[index2] = distance[index1] + 1;
                     previous[index2] = index1;
-                    return new Tuple<>(true, previous, index2, distance[index2]);
+                    return new Tuple<>(true, distance[index2]);
                 } else if (!visited[index2]) {
                     visited[index2] = true;
                     distance[index2] = distance[index1] + 1;
@@ -156,7 +161,7 @@ public class Board {
                 }
             }
         }
-        return new Tuple<>(false, null, null, null);
+        return new Tuple<>(false, null);
     }
 
     private boolean checkPath() {
@@ -296,8 +301,14 @@ public class Board {
     }
 
     public boolean performMove(int player, String pos) {
-        if (pos.length() == 2) return movePlayer(player, pos);
-        else return addFence(player, pos);
+        switch (pos.length()) {
+            case 2:
+                return movePlayer(player, pos);
+            case 3:
+                return addFence(player, pos);
+            default:
+                return false;
+        }
     }
 
     public int playerWon() {

@@ -35,12 +35,12 @@ public class Game {
                     System.out.println("Decision time: " + (endTime - startTime) / 60000 + " min");
                 }
                 else {
-                    Tuple<String,Integer,Integer,Integer> result = new Tuple<>(" ",81, null, null);
+                    Tuple<String,Integer> result = new Tuple<>(" ", 81);
                     for (String s : board.getPossibleMoves(turn)) {
-                        Tuple<Boolean,int[],Integer,Integer> t = board.bfs(board.getSquare(s),turn);
-                        if(t._4 < result._2) {
+                        Tuple<Boolean,Integer> t = board.bfs(board.getSquare(s),turn);
+                        if(t._2 < result._2) {
                             result._1 = s;
-                            result._2 = t._4;
+                            result._2 = t._2;
                         }
                     }
                     board.performMove(turn,result._1);
