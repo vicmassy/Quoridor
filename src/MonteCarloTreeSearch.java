@@ -3,8 +3,10 @@ import java.util.*;
 public class MonteCarloTreeSearch {
 
     private static final int WIN_SCORE = 10;
+    private static int SIMULATIONS;
 
-    public MonteCarloTreeSearch() {
+    public MonteCarloTreeSearch(int simulations) {
+        SIMULATIONS = simulations;
     }
 
     public Board findNextMove(Board board, int player) {
@@ -15,7 +17,7 @@ public class MonteCarloTreeSearch {
         rootNode.setPlayer(opponent);
         int simulations = 0;
 
-        while (simulations < 120000) {
+        while (simulations < SIMULATIONS) {
             board = new Board(originalBoard);
             ++simulations;
 
