@@ -12,7 +12,7 @@ public class Board {
     public static final int IN_PROGRESS = -1;
     public static final int P1 = 0;
     public static final int P2 = 1;
-    private static final String POS_P1 = "E1";
+    private static final String POS_P1 = "E8";
     private static final String POS_P2 = "E9";
 
     public Board() {

@@ -109,6 +109,24 @@ public class Node {
         return Collections.max(this.children, Comparator.comparing(c -> c.winScore));
     }
 
+    public Node getChildsMaxScore() {
+        Collections.sort(this.children, Comparator.comparing(c->winScore));
+        List<Node> l = new LinkedList<>();
+        l.add(this.children.get(0));
+        int maxScore = this.children.get(0).winScore;
+
+        for (int i = 1; i < this.children.size(); ++i) {
+            if(this.children.get(i).winScore == maxScore) {
+                l.add(this.children.get(i));
+            }
+            else {
+                break;
+            }
+        }
+        Random random = new Random();
+        return l.get(random.nextInt(l.size()));
+    }
+
     public void randomPlay(Board board) {
         Random rand = new Random();
         List<String> availablePositions = board.getPossibleMoves(player);
