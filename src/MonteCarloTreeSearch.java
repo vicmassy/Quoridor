@@ -41,7 +41,7 @@ public class MonteCarloTreeSearch {
             backPropagation(nodeToExplore, playoutResult);
             if (simulations % 5000 == 0) System.out.print(simulations + " ");
         }
-        Node bestNode = rootNode.getChildsMaxScore();
+        Node bestNode = rootNode.getChildWithMaxScore(originalBoard);
         originalBoard.performMove(bestNode.getPlayer(), bestNode.getMove());
         System.out.println();
 

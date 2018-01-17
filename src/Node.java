@@ -109,22 +109,32 @@ public class Node {
         return Collections.max(this.children, Comparator.comparing(c -> c.winScore));
     }
 
-    public Node getChildsMaxScore() {
+    public Node getChildWithMaxScore(Board board) {
         Collections.sort(this.children, Comparator.comparing(c->winScore));
+        if(this.children.get(0).move.length() == 3) {
+            return this.children.get(0);
+        }
         List<Node> l = new LinkedList<>();
         l.add(this.children.get(0));
         int maxScore = this.children.get(0).winScore;
 
         for (int i = 1; i < this.children.size(); ++i) {
-            if(this.children.get(i).winScore == maxScore) {
+            if(this.children.get(i).winScore == maxScore && this.children.get(i).move.length() == 2) {
                 l.add(this.children.get(i));
             }
             else {
                 break;
             }
         }
-        Random random = new Random();
-        return l.get(random.nextInt(l.size()));
+        Tuple<Node, Integer> result = new Tuple<>(null, 81);
+        for (Node n : l) {
+            Tuple<Boolean, Integer> t = board.bfs(board.getSquare(n.move), player);
+            if (t._2 < result._2) {
+                result._1 = n;
+                result._2 = t._2;
+            }
+        }
+        return result._1;
     }
 
     public void randomPlay(Board board) {

@@ -5,6 +5,7 @@ public class Main {
         Game g;
         int result[] = {0, 0};
         for (int i = 0; i < 30; ++i) {
+            System.out.println("GAME " + (i+1));
             g = new Game();
             ++result[g.startGame()-1];
         }
