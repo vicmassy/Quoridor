@@ -21,7 +21,7 @@ public class Game {
             board.print();
             System.out.println("Player " + (turn+1) + " turn: " + board.getPlayerTurn(turn).getNeighbours());
             System.out.println("Nº Fences: " + board.getPlayerTurn(turn).getFences());
-            /*if(turn == 0) {
+            if(turn == 1) {
                 input = scanner.nextLine();
                 while (!validInput(input)) {
                     System.out.println("Incorrect movement: " + input);
@@ -47,9 +47,9 @@ public class Game {
                     }
                     board.performMove(turn,result._1);
                 }
-            }*/
+            }
 
-            Player p = board.getPlayerTurn(turn);
+            /*Player p = board.getPlayerTurn(turn);
             if(p.getFences() > 0) {
                 long startTime = System.currentTimeMillis();
                 if(turn == 0) {
@@ -71,7 +71,7 @@ public class Game {
                     }
                 }
                 board.performMove(turn,result._1);
-            }
+            }*/
             turn = (turn+1)%2;
         }
         board.print();

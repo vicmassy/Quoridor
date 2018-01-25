@@ -7,5 +7,17 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$USER_HOME$/Downloads/Quoridor-SDK-r379-20131110" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="file://$USER_HOME$/Downloads/Quoridor-SDK-r379-20131110/javadoc" />
+        </JAVADOC>
+        <SOURCES />
+        <jarDirectory url="file://$USER_HOME$/Downloads/Quoridor-SDK-r379-20131110" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>
